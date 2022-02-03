@@ -53,6 +53,12 @@
 
 获取到自己openid以后就填写到代码当中去，这里最好先手动生成一下`config.json`,因为阿里云FC那个里面不知道是怎么回事，无法通过代码自动生成`config.json`。
 
+## 设置定时触发
+
+![image-20220203115927372](https://cdn.zengchen233.cn/img/202202031159454.png)
+
+这里可以设置定时触发器，我设置的是上海时间每天早上六点自动打卡：`CRON_TZ=Asia/Shanghai 0 0 6 * * *`。
+
 ## 结果截图
 
 ![image-20220202182901321](https://cdn.zengchen233.cn/img/202202021829414.png)

@@ -1,0 +1,33 @@
+{
+    "data": {
+      "checkPlace": "",
+      "contactMethod": "",
+      "teacher": "",
+      "temperature": "36.2",
+      "isCohabitFever": "·ñ",
+      "isLeavePalce": "·ñ",
+      "beenPlace": "",
+      "isContactNcov": "·ñ",
+      "livingPlace": "",
+      "livingPlaceDetail": "",
+      "name1": "",
+      "relation1": "",
+      "phone1": "",
+      "name2": "",
+      "relation2": "",
+      "phone2": "",
+      "remark": "",
+      "extraInfo": "[]",
+      "healthStatus": "z",
+      "emergencyContactMethod": "[]",
+      "checkPlacePoint": "124,37",
+      "checkPlaceDetail": "",
+      "checkPlaceCountry": "",
+      "checkPlaceProvince": "",
+      "checkPlaceCity": "",
+      "checkPlaceArea": ""
+    },
+    "other": {
+      "openid": ""
+    }
+}

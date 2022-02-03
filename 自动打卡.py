@@ -3,22 +3,31 @@ import logging
 import datetime
 import json
 import os
+import pytz
 import smtplib
 import requests
 from email.mime.text import MIMEText
 from email.header import Header
 
-# Made by ZengChen
-# https://zengchen233.cn/
 logger = logging.getLogger()
+
+# 邮箱参数
+sender = ''  # 发送邮箱
+pwd = ''  # 邮箱smtp密码
+server_host = ''  # smtp地址
+receiver = ''  # 接收者
+
+# post地址
 url = r"https://mps.zocedu.com/corona/submitHealthCheck/submit"
 url_info = r"https://mps.zocedu.com/corona/submitHealthCheck/getCurrentInfo"
+
+# 生成json文件
 defaultjson = {
     "data": {
         "checkPlace": "",
         "contactMethod": "",
         "teacher": "",
-        "temperature": "36",
+        "temperature": "36.2",
         "isCohabitFever": "否",
         "isLeavePalce": "否",
         "beenPlace": "",
@@ -84,10 +93,11 @@ def checkIn():
     }
     res = requests.post(url, data=data, headers=headers, cookies=cookies)
     if res.text == "":
-        logger.info("校趣多打卡成功！当前时间：" + datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        logger.info("校趣多打卡成功！当前时间：" + datetime.datetime.now(pytz.timezone('PRC')).strftime("%Y-%m-%d %H:%M:%S"))
         send_email()
     else:
         logger.error("校趣多打卡失败！请检查配置文件是否填写正确！")
+        send_error_email()
 
 
 # 创建配置文件
@@ -99,16 +109,10 @@ def createConfigFile():
 
 
 def send_email():
-    # 参数
     global server
-    sender = ""  # 发送邮件的地址
-    pwd = ""  # smtp密码
-    server_host = ""  # smtp主机地址
-    receiver = ''  # 接收者邮箱
-
     # 邮件内容
     subject = '健康打卡已经完成！'
-    time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    time = datetime.datetime.now(pytz.timezone('PRC')).strftime("%Y-%m-%d %H:%M")
     sentence = '当前时间为：' + time + '，当天健康打卡已经完成！'
     message = MIMEText(sentence, 'plain', 'utf-8')
     message['Subject'] = Header(subject, 'utf-8')
@@ -123,7 +127,31 @@ def send_email():
         print("邮件发送成功")
     except smtplib.SMTPException:
         print("Error: 无法发送邮件")
-    server.close()
+    finally:
+        server.close()
+
+
+def send_error_email():
+    global server
+    # 邮件内容
+    subject = '好像出错啦！'
+    time = datetime.datetime.now(pytz.timezone('PRC')).strftime("%Y-%m-%d %H:%M")
+    sentence = '当前时间为：' + time + '，当天未完成健康打卡，请手动打卡，错误信息见控制台。'
+    message = MIMEText(sentence, 'plain', 'utf-8')
+    message['Subject'] = Header(subject, 'utf-8')
+    message['From'] = sender
+
+    # 发送
+    try:
+        server = smtplib.SMTP_SSL(server_host)
+        server.connect(server_host, 465)
+        server.login(sender, pwd)
+        server.sendmail(sender, receiver, message.as_string())
+        print("邮件发送成功")
+    except smtplib.SMTPException:
+        print("Error: 无法发送邮件")
+    finally:
+        server.close()
 
 
 def handler(event, context):
